@@ -2,8 +2,7 @@
 
 # Pushpin MIDI Synthesizer for Game Boy Color
 
-[Check out the Pushpin group if you’re having trouble.](http://groups.google.com/group/pushpin)
-
+[For historical errata and a story, read the Story of Pushpin](http://notes.variogr.am/post/229232511/pushpin-is-real-archive)
 
 **What is Pushpin?**
 
