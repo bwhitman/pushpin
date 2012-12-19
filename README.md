@@ -1,9 +1,9 @@
-
 # Pushpin MIDI Synthesizer for Game Boy Color
 
 [For historical errata and a story, read the Story of Pushpin](http://notes.variogr.am/post/229232511/pushpin-is-real-archive)
 
 ![Pushpin](http://aps.s3.amazonaws.com/9SxiL.png)
+![Little-Scale](http://2.bp.blogspot.com/_5s0kNc3eu14/SEOaj5u9wbI/AAAAAAAAC0Y/YchrZP5IV1Q/s320/100_5313.jpg)
 
 **What is Pushpin?**
 
@@ -48,6 +48,13 @@ programmer for Game Boy devices, these are widely available and cheap.
 After programming a cartridge it plugs into your Game Boy, and the cable
 you build plugs into your Link Port on the Game Boy. The other end of
 the cable hooks into whichever MIDI device or port you choose.
+
+**MIDI Link cable?**
+
+Here are some schematics by people in the community:
+
+ * [Gameboy Genius's](http://blog.gg8.se/wordpress/gameboy-resources/how-to-build-a-midi-interface-for-pushpin/)
+ * [Little-Scale's](http://little-scale.blogspot.com/2008/06/pushpin-interface.html)
 
 **How do I use Pushpin?**
 
