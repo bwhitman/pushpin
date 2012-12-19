@@ -54,6 +54,7 @@ Here are some schematics by people in the community:
 
  * [Gameboy Genius's](http://blog.gg8.se/wordpress/gameboy-resources/how-to-build-a-midi-interface-for-pushpin/)
  * [Little-Scale's](http://little-scale.blogspot.com/2008/06/pushpin-interface.html)
+ * [epromfoundry's](http://www.epromfoundry.com/home/?page_id=809)
 
 ![Little-Scale's schematic](http://2.bp.blogspot.com/_5s0kNc3eu14/SEOaj5u9wbI/AAAAAAAAC0Y/YchrZP5IV1Q/s320/100_5313.jpg)
 
