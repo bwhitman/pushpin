@@ -1,8 +1,9 @@
 
-
 # Pushpin MIDI Synthesizer for Game Boy Color
 
 [For historical errata and a story, read the Story of Pushpin](http://notes.variogr.am/post/229232511/pushpin-is-real-archive)
+
+![Pushpin](http://aps.s3.amazonaws.com/9SxiL.png)
 
 **What is Pushpin?**
 
