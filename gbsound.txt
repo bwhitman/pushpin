@@ -1,0 +1,519 @@
+The Skinny on GB sound
+By Aaron St. John
+===========================================================
+
+Before you read this document, be sure to grab the gbsnd2 document (available from http://www.gbdev.org/news/dl.html) and have it read it through.  This document gives hints to using sound, not a thorough explanation!
+
+Rule #1:
+
+	Thou shalt bow to the almighty NR_52 register!  Without this register your GameBoy sound is nothing.  You may not realize it, but if bit 7 of NR_52 (all sound on/off) is not set, the real GB will not accept any changes to any sound registers.  Just because an emulator let's you set other sound registers doesn't mean the real GB will.
+
+BAD:						GOOD:
+Setting the regs in this order:	Using this order:
+NR_50						NR_52
+NR_51						NR_50
+NR_52						NR_51
+
+Rule #2:
+
+	Thou shalt re-set the envelope/tone registers every time you play a new sound.  Don't that just because you told the GB what envelope/freq/length to use last time you started a sound that the right values will be there again.  From what I can tell, the GB updates the envelope/freq/length regs every on-the-fly as it is playing a sound.  Just be safe, set the envelope/freq/length regs before you set the initial reg.
+
+Rule #3: 
+
+	Thou shalt never use VIN (bits 7 and 3 of NR_50).  VIN is made so that you can pump sounds through the cartridge pins into the GB.  As a homebrew coder, you'll probably never need to use VIN, so keep those bits off.  Things will just be generally nicer for you.
+
+Rule #4:
+
+	UM, haven't thought of one yet.
+
+
+
+
+
+
+1.	Introduction to Sound
+The sound section is composed of circuitry which produces 4 types of sound, namely sounds 1,2,3 and 4, as specified below. The sound section can also synthesize and reproduce external patterns.
+
+Sound1:		Produces quadrangular waves with sweep and envelope 				functions.
+Sound2:		Produces quadrangular waves with an envelope.
+Sound3:		Outputs voluntary wave patterns from Wave RAM.
+Sound4:		Produces white noise with an envelope.
+
+Each sound has two modes: ON and OFF.
+
+1.1	ON MODE
+
+According to the data set in the Mode register of each sound, the various sounds are produced.  The data in the Mode register can be set at all times while producing sound.
+
+1.2	INITIAL FLAG
+
+When setting initial value of the envelope and restarting the length counter, set the initial flag at "1" and initialize the data.
+
+1.3	MUTE
+
+When the output level at sound 3 is set to mute (bits 5 and 6 of  NR32=0), no sound will be produced regardless of the setting of the ON flag.
+
+1.4 	STOP
+
+Under the following situations, the ON flag is reset and sound output stops:
+
+when the sound output is stopped by the length counter.
+when overflow occurs in the addition mode while the sweep is operating in Sound 1.
+
+1.5	OFF MODE
+
+During OFF mode, the operation of the frequency counter and the D/A converter stops, producing an interruption in sound output.
+
+1.6 	SOUND 3
+
+When the sound OFF flag (bit 7 of NR30) is reset to "0", cancellation of the OFF mode must be performed by setting the sound OFF flag to a "1".  This is performed by Sound 3.
+
+1.7	ALL SOUND OFF MODE
+
+When all the sound ON/OFF flags (bit 7 of  NR52) are set to "0", the mode registers for Sounds 1, 2, 3 and 4 are reset, and all sound output stops.  To cancel this mode, set bit 7 of NR52 to "1", then set all the sound ON/OFF flags to "1".
+
+(Note: The setting of each sound's mode register must be done after the All Sound Off mode is cancelled.  While this flag is set, sound mode registers cannot be set).
+
+Chapter 2		Sound Control Register
+
+2.1	SOUND MODE 1 REGISTER
+
+Sound 1 is a circuit that produces a quadrangular wave pattern with sweep and envelope functions.  It must be set at registers NR 10, NR 11, NR 12, NR 13, and NR 14.
+
+
+NAME	ADDRESS
+NR10 	FF10				 key:  is not used
+						w   is read/write 
+						     is write only
+
+ D7     D6     D5    D4     D3     D2     D1     D0
+	 	 	 	 	 	 	 	
+
+Number of Sweep shifts (0-7)
+Sweep increase/decrease
+	0: Addition (frequency increases)
+	1: Subtraction (frequency decrease)
+Sweep Time
+
+2.1.1	NUMBER OF SWEEP SHIFTS
+The change of frequency (NR 13, NR14) at each shift is calculated by the following formula:
+
+ 
+Where;	X (0) = Initial Data
+	X (t-1) = Previous Frequency
+	n = 0~7
+
+When calculating the above formula, if the value of a bit exceeds bit 11, the output of the sound stops, and the Sound 1 ON flag (at bit 0 of NR52) is reset.  During the subtraction, when the value becomes less than 0, the value shown prior to the calculation will be the current value, thus making  X (t) = X(t-1).  However, when n=0, there will be no shift and the frequency remains unchanged.
+
+2.1.2	SWEEP TIME ts
+At each ts period, frequency changes.
+
+000  :  Sweep OFF
+001  :  ts = 1/f128		(7.8 ms)
+010  :  ts = 2/f128		(15.6 ms)
+011  :  ts = 3/f128		(23.4 ms)
+100  :  ts = 4/f128		(31.3 ms)
+101  :  ts = 5/f128		(39.1 ms)
+110  :  ts = 6/f128		(46.9 ms)
+111  :  ts = 7/128		(54.7 ms)	f128 = 128Hz
+
+Figure 2-2-1	Example, Sweep Wave Pattern
+
+When NR10=79H and initial frequency data = 400H sweep wave pattern will be:
+
+ 
+
+Note: When the sweep function is not used, set the increase/decrease flag at "1" (subtract mode).
+
+NAME	ADDRESS
+NR11	FF11
+
+ D7     D6     D5    D4     D3     D2     D1     D0
+ 	 				 	 	 	
+
+Sound Length Data (0 ~ 63)
+Wave Pattern Duty
+
+Sound Length = (64-t1) * (1/256) sec
+Wave Duty
+
+ 
+
+NAME	ADDRESS
+NR12	FF12
+
+ D7     D6     D5    D4     D3     D2     D1     D0
+ 	 	 	 	 	  	 	 	
+
+Number of Envelope Sweep (0 ~ 7)
+
+Envelope UP/DOWN
+	0: Decrease
+	1: Range of Increase
+
+Initial Value of Envelope
+
+
+2.1.2.1	NUMBER OF ENVELOPE STEPS
+set the range of increase or the length of a one-step decrease.  The length of one-step = n * (1/64) sec.  At n = 0, the envelope function stops.
+
+2.1.2.2	INITIAL VALUE OF ENVELOPE (0000 - 1111)
+Using the 4-bit D/A circuit, 16 levels of steps can be specified.  It's maximum level is 1111 and becomes mute at 0000.
+
+Figure 2-2-2	Example, Initial Envelope Value
+
+When NR12 = 94H,
+Amp gain is:
+
+ 
+
+NAME	ADDRESS
+NR13	FF13
+
+ D7     D6     D5    D4     D3     D2     D1     D0
+ 	 	 	 	 	 	 	  	
+Frequency Data (Low) (all bits)
+
+
+
+NAME	ADDRESS
+NR14	FF14
+
+
+ D7     D6     D5    D4     D3     D2     D1     D0
+ 	 				 	 	 	
+
+Frequency Data (High, 3 bit)
+Counter/consecutive Selection
+Initial
+
+
+2.1.2.3	COUNTER/CONSECUTIVE SELECTION
+When "0", regardless of the length of data on the NR11 register, sound can be produced consecutively.  When "1", sound is generated during the time period set by the length data contained in register NR11.  After the sound is ouput, the Sound 1 ON flag, at bit 0 of register NR52 is reset.
+
+2.1.2.4	INITIAL
+When this bit is set at "1", Sound 1 starts again.  Suppose the 11 bit frequency data set at NR13 and NR14 is X.  Then the ouput frequency (f) can be calculated by the following formula.
+
+	 
+
+Therefore, the minimum frequency will be 64Hz and the maximum frequency will be  131.1Khz.
+
+2.1.3	CAUTIONS WHEN USING SOUND 1
+
+When the sweep function is not used at Sound 1, set the sweep time at 0 (sweep OFF) and either set the sweep increase/decrease flag at 1 or the sweep shift number at 0.  (Set NR10 at 04H ~ 07H or 00H.)
+
+If the sweep increase/decrease flag of NR10 is set at 0 (addition mode), the sweep shift number may be anything other than 0, and the sweep OFF mode is set (e.g., NR10=01H), there are cases in which no sound is produced.
+
+When changing the content of the envelope register (NR12) while the sound is operating (i.e., when the ON flag is at 1), set the value at the envelope register before setting the initial flag.
+
+2.2	SOUND 2 MODE REGISTER
+
+Sound 2 is a circuit that produces a quadrangular wave pattern with an envelope function.  It can be set at registers NR21, NR22, NR23, and NR24.
+
+NAME	ADDRESS
+NR21	FF16
+
+ D7     D6     D5    D4     D3     D2     D1     D0
+ 	 				 	 	 	
+
+Sound Length Data (0 ~ 63)
+Wave Pattern Duty
+
+
+
+NAME	ADDRESS
+NR22	FF17
+
+ D7     D6     D5    D4     D3     D2     D1     D0
+ 	 	 	 	 	 	 	  	
+
+
+Number of Envelope Sweeps ( 0 ~ 7)
+Envelope UP/DOWN
+	0: Decrease
+	1: Range of Increase
+Initial Value of Envelope
+
+
+
+NAME	ADDRESS
+NR23	FF18
+
+ D7     D6     D5    D4     D3     D2     D1     D0
+ 	 	 	 	 	 	 	  	
+Frequency Data  (Low) (all bits)
+
+
+
+
+NAME	ADDRESS
+NR24	FF19
+
+ D7     D6     D5    D4     D3     D2     D1     D0
+ 	 				 	 	 	
+
+Frequency Data (High, 3 bit)
+Counter/consecutive Selection
+Initial
+
+
+
+2.2.1	COUNTER/CONSECUTIVE SELECTION
+
+When "0", regardless of the length data on the NR21 register, sound is produced consecutively.  When "1", sound is generated for the time period set by the length data contained in register NR21.  After the sound is ouput, The Sound 2 ON Flag (bit 1) of register NR52 is reset.
+
+2.2.2	INITIAL
+
+When this bit is set at "1", Sound 2 starts again.
+
+2.2.3	CAUTIONS WHEN USING SOUND 2
+
+When changing the content of the envelope register (NR22) while the sound is operating (i.e., when the ON flag is at 1), set the value at the envelope register before setting the initial flag.
+
+2.3	SOUND 3 MODE REGISTER
+
+Sound 3 is a circuit which produces a voluntary wave pattern.  It automatically reads the wave pattern (one cycle) written on addresses FF30H ~ FF3FH of a Wave Pattern RAM.  This wave pattern can be output while changing the length, frequency, and sound level using registers NR30, NR31, NR32, NR33, and NR34.  Assignment of sound length, frequency function are similar to the Sound 1 circuit.
+
+NAME	ADDRESS
+NR30	FF1A
+
+ D7     D6     D5    D4     D3     D2     D1     D0
+ 								
+
+Sound OFF
+	0: Sound 3 Output Stop
+	1: Sound 3 Output OK
+
+
+NAME	ADDRESS
+NR31	FF1B
+
+R/W Select the Sound Length
+
+ D7     D6     D5    D4     D3     D2     D1     D0
+ 	 	 	 	 	 	 	  	
+Sound Length Data (t1) (all bits)
+Sound Length = (256-t1) * (1/256) sec
+
+
+
+NAME	ADDRESS
+NR32	FF1C
+
+ D7     D6     D5    D4     D3     D2     D1     D0
+	 	 						
+
+Select Output Level
+
+Output level:
+00 : Mute
+01 : Produce the wave pattern RAM data as it is (4-bit length).
+10 : Produce the wave pattern RAM data (4-bit length) at the one-bit right shift (1/2) form.
+11 : Produce the wave pattern RAM data  (4-bit length) at the 2-bit right shift (1/4) form.
+
+
+NAME	ADDRESS
+NR33	FF1D
+
+ D7     D6     D5    D4     D3     D2     D1     D0
+ 	 	 	 	 	 	 	  	
+
+Frequency (Low) (all bits)
+
+
+NAME	ADDRESS
+NR34	FF1E
+
+ D7     D6     D5    D4     D3     D2     D1     D0
+ 	 				 	 	 	
+
+Frequency Data (High, 3 bit)
+Counter/consecutive Selection
+Initial Flag
+
+
+2.3.1	COUNTER/CONSECUTIVE SELECTION
+
+When this bit is set to "0", sound is produced consecutively, regardless of the length data on the NR31 register.  When set to "1", sound is generated for the length of time set by the length data contained in register NR31.  After the sound is output, the ON flag of Sound 3, bit 2 of register NR52, is reset.
+
+2.3.2	INITIAL FLAG
+
+When the sound OFF flag (NR30, bit 7) is at "1", and a "1" is assigned to bit 7 of NR34, Sound 3 starts again.
+
+2.3.3	PROGRAMMING CAUTIONS
+
+When changing frequency while outputting Sound 3, the Initial flag must not be set.  This may cause data in the Wave RAM to be destroyed.
+
+The initial flag may be set during the ouput of Sound 1, 2, and 4.
+
+WAVE RAM FORMAT
+ADDRESS	D7	D6           D5	D4	D3	D2         D1	D0	
+FF30		Step 0			Step 1		
+FF31		Step 2			Step 3		
+FF32		Step 4			Step 5		
+....all the way down to:
+
+FF3F		Step 30			Step 31		
+
+[EXAMPLE] CHOPPING WAVE
+					FF30H -	01H, 23H, 45H, 67H
+						89H, ABH, CDH, EFH
+						EDH, CBH, A9H, 87H
+						65H, 43H, 21H, 00H
+
+ 
+
+2.4	SOUND 4 MODE REGISTER
+
+Sound 4 is a circuit that produces white noise.  It's output data is produced by switching the step of the polynomial counter that produces frequencies and random numbers.  This is performed by changing the frequency ratio and envelope data using registers NR41, NR42, and NR44.
+
+
+NAME	ADDRESS
+NR41	FF20
+
+R/W Select the Sound Length
+
+ D7     D6     D5    D4     D3     D2     D1     D0
+		 	 	 	 	 	 	
+
+Sound Length Data t1 (0 ~ 63)
+
+
+NAME	ADDRESS
+NR42	FF21
+
+ D7     D6     D5    D4     D3     D2     D1     D0
+ 	 	 	 	 	 	 	  	
+
+Number of Envelope Steps (0 ~ 7)
+
+Envelope Up/Down
+	0: Decrease
+	1: Range of Increase
+
+Initial Value of Envelope
+
+
+
+
+
+
+
+NAME	ADDRESS
+NR43	FF22
+
+ D7     D6     D5    D4     D3     D2     D1     D0
+ 	 	 	 	 	 	 	  	
+
+Selection of Frequency Ratio
+Selection of Polynomial Counter's Step
+Selection of the Shift Clock Frequency
+for the Polynomial Counter
+
+2.4.1	SELECTION OF FREQUENCY RATIO
+
+The polynomial counter's shift clock is comprised of a 14-step pre-scaler.  Select the imput clock of the pre-scaler, as follows:
+
+	 
+
+2.4.2	SELECTION OF POLYNOMIAL COUNTER STEP
+	0:	15 steps
+	1:	7 steps
+
+2.4.3	SELECTIONS OF POLYNOMIAL COUNTER CLOCK
+
+0000: Ratio of Frequencies * 1/2
+0001: Ratio of Frequencies * 1/2 
+0010: Ratio of Frequencies * 1/2 
+0011: Ratio of Frequencies * 1/2 
+	····          ····
+1101: Ratio of Frequencies *1/2 
+1110: Not Used
+1111: Not Used
+
+NAME	ADDRESS	(F.H Note: The Name and Address for this register are written verbatim, but most
+NR30	FF1A			  likely it should read,  "Name NR44 : Address FF23") 
+
+ D7     D6     D5    D4     D3     D2     D1     D0
+ 	 							
+
+Counter/consecutive Selection
+Initial
+
+2.4.4	COUNTER/CONSECUTIVE SELECTION
+
+Regardless of the length on the NR41 register, sound is produced consecutively while this bit is "0".  When bit 6 is set to "1", sound is generated for the time period set by the length data contained in register NR41.  After the sound is ouput, the ON flag of Sound 4 (bit 3 of register NR52) is reset.
+
+2.4.5	INITIAL
+
+When bit 7 is "1", Sound 4 starts again.
+
+2.4.6	PROGRAMMING CAUTIONS
+
+When changing the content of the envelope register (NR22) while the sound is operating (ON flag at "1"), set the value at the envelope register before setting the Initial flag.
+
+2.5	SOUND CONTROL REGISTER
+
+NAME	ADDRESS
+NR50	FF24
+
+ D7     D6     D5    D4     D3     D2     D1     D0
+ 	 	 	 	 	 	 	  	
+
+S01 Output Level (0 ~ 7)
+	000: Minimum Level (£ +8)
+	111: Maximum Level
+Vin ® SO1 ON/OFF
+SO2 Output Level (0 ~ 7)
+	000: Minimum Level (£+8)
+	111: Maximum Level
+Vin ® SO2 ON/OFF
+
+Vin ® SO1 (Vin ® SO2)
+The voice input for a Vin terminal is produced by synthesizing the combined sound from Sounds 1 through 4.
+0:  No Output
+1:  Output OK
+
+NAME	ADDRESS
+NR51	FF25
+
+ D7     D6     D5    D4     D3     D2     D1     D0
+ 	 	 	 	 	 	 	  	
+							(0: No Output    1: Output OK)
+Output Sound 1 to SO1 Terminal
+Output Sound 2 to SO1 Terminal
+Output Sound 3 to SO1 Terminal
+Output Sound 4 to SO1 Terminal
+Output Sound 1 to SO2 Terminal
+Output Sound 2 to SO2 Terminal
+Output Sound 3 to SO2 Terminal
+Output Sound 4 to SO2 Terminal
+
+NAME	ADDRESS
+NR52	FF26
+
+ D7     D6     D5    D4     D3     D2     D1     D0
+ 				 	 	 	 	
+
+
+Sound 1 ON Flag
+Sound 2 ON Flag
+Sound 3 ON Flag
+Sound 4 ON Flag
+Each sound is set during its output.  It is
+reset at the counter mode after the time 
+set by the length data elapses.
+All sound ON/OFF
+	0: Stop all sound circuits
+	1: Operate all sound circuits
+
+
+
+
+
+
+***************************************************************************
+Credits:
+Game Boy Sound Document  (version 1.2) was brought to you by NoComply, F.H.
+Document Reproduced by F.H.
+****************************************************************************
