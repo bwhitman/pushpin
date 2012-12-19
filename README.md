@@ -1,65 +1,11 @@
-[variogr.am latest](http://variogram.com/latest)
-================================================
 
-Pushpin Documentation
----------------------
 
-[Back to Pushpin](http://variogr.am/latest/?page_id=31).\
- \
-[Check out the Pushpin group if you’re having
-trouble.](http://groups.google.com/group/pushpin)
+# Pushpin MIDI Synthesizer for Game Boy Color
 
-**General Information / FAQs**
+[Check out the Pushpin group if you’re having trouble.](http://groups.google.com/group/pushpin)
 
--   [What is Pushpin?](http://variogr.am/latest/?page_id=32#i1)
--   [Compatibility](http://variogr.am/latest/?page_id=32#i2)
--   [Who can use it?](http://variogr.am/latest/?page_id=32#i3)
--   [What comes with Pushpin?](http://variogr.am/latest/?page_id=32#i4)
--   [How do I use Pushpin?](http://variogr.am/latest/?page_id=32#i5)
--   [How do I recall / save
-    patches?](http://variogr.am/latest/?page_id=32#i6)
--   [What can I do with the Wave Pattern
-    RAM?](http://variogr.am/latest/?page_id=32#i7)
-
-**Technical Information**
-
--   [Colophon](http://variogr.am/latest/?page_id=32#i8)
--   [Using Pushpin to Remotely Tweak
-    Registers](http://variogr.am/latest/?page_id=32#i9)
--   [Using Pushpin’s SMM to Play Digital
-    Audio](http://variogr.am/latest/?page_id=32#i10)
-
-**Sound Specification for Pushpin**
-
--   [The Envelope Function](http://variogr.am/latest/?page_id=32#i11)
--   [Sound Frequency](http://variogr.am/latest/?page_id=32#i12)
--   [Sound1: Square Wave with Envelope and Frequency
-    Sweep](http://variogr.am/latest/?page_id=32#i13)
--   [Sound2: Square Wave with
-    Envelope](http://variogr.am/latest/?page_id=32#i14)
--   [Sound3: Wave Pattern RAM
-    Player](http://variogr.am/latest/?page_id=32#i15)
--   [Sound4: Noise Channel with
-    Envelope](http://variogr.am/latest/?page_id=32#i16)
-
-**MIDI Specification for Pushpin**
-
--   [MIDI Note On Messages](http://variogr.am/latest/?page_id=32#i17)
--   [MIDI Note Off Messages](http://variogr.am/latest/?page_id=32#i18)
--   [MIDI Pitch Bend Messages](http://variogr.am/latest/?page_id=32#i19)
--   [MIDI Program Change
-    Messages](http://variogr.am/latest/?page_id=32#i20)
--   [MIDI Controllers](http://variogr.am/latest/?page_id=32#i21)
-
-* * * * *
-
-****
 
 **What is Pushpin?**
-
-****
-
-****
 
 Pushpin is a MIDI Synthesizer Kit that operates on a Nintendo Game Boy
 Color. A MIDI synthesizer is a device that listens to MIDI signals from
@@ -70,13 +16,9 @@ Boy’s sound output via any MIDI instrument. For example, you can
 sequence songs from your computer or hardware arranger that use the Game
 Boy as an instrument.
 
-****
 
 **Compatibility**
 
-****
-
-****
 
 Pushpin must be executed on a Nintendo Game Boy Color device. No other
 version of the Game Boy will work with Pushpin. While Pushpin doesn’t
@@ -85,13 +27,9 @@ requires a faster processor than the original or Pocket Game Boy.
 Pushpin will not do very much on an emulator. It will also not work on a
 Gameboy Advance or Nintendo DS.
 
-****
 
 **Who can use it?**
 
-****
-
-****
 
 Pushpin was developed for musicians who can now make great music in a
 small form factor for a low cost. The Game Boy’s sound chip is
@@ -101,13 +39,8 @@ and convincing bass. It is multitimbral, meaning you can control up to 4
 instruments as once with no overdubbing. Every single register of the
 sound hardware is accessible via MIDI Control Changes.
 
-****
 
 **What comes with Pushpin?**
-
-****
-
-****
 
 Pushpin is two things: the ROM file, compatible only with the Game Boy
 Color, and plans for the MIDI Link cable. You need a flash cartridge
@@ -116,13 +49,8 @@ After programming a cartridge it plugs into your Game Boy, and the cable
 you build plugs into your Link Port on the Game Boy. The other end of
 the cable hooks into whichever MIDI device or port you choose.
 
-****
-
 **How do I use Pushpin?**
 
-****
-
-****
 
 Easy enough– first, if you are not already, we recommend you familarise
 yourself with the MIDI standard. Very little work is done on the Game
@@ -158,8 +86,7 @@ hear it on Sound Channel 1 of the Game Boy. MIDI Channel 1 (plus the
 offset if there is any, see above) controls the first Sound Channel of
 the Game Boy, channel 2 the second, channel 3 the Wave Pattern, and
 channel 4 the noise / drum channel. For more information on the sound
-producing variations of\
- Pushpin, see the Sound Specification section.
+producing variations of Pushpin, see the Sound Specification section.
 
 You can change parameters of each channel by using the controller values
 (listed below in the MIDI Specification.) You can sequence continuous
@@ -168,10 +95,7 @@ changes of parameters along with the notes in your song, or just set up
 unlike the Program/Patch change or MIDI Note messages, Controller
 changes on Pushpin all must be received on the first set MIDI Channel.
 
-For more information on MIDI, see [MIDI Manufacturer’s
-Assocation](http://www.midi.org/) or [Complete MIDI\
-
-Specification](http://www.gweep.net/~prefect/eng/reference/protocol/midispec.html).
+For more information on MIDI, see [MIDI Manufacturer’s Assocation](http://www.midi.org/) or [Complete MIDI Specification](http://www.gweep.net/~prefect/eng/reference/protocol/midispec.html).
 
 **What can I do with the Wave Pattern RAM?**
 
@@ -189,10 +113,7 @@ triangle and sine. To change the Wave Pattern RAM during play, use MIDI
 controller numbers 54 through 85. Each controller scales to a sample in
 the pattern.
 
-* * * * *
-
-**\
- Technical Information**
+**Technical Information**
 
 This section contains information that will not be of interest to
 ‘normal users.’ However, if you are planning to push Pushpin, or develop
@@ -229,19 +150,13 @@ reason you would like to manually change these values, you should be
 aware of a MIDI-spefication limitation — all controller values must\
  be 7-bits or less. Any 8-bit value coming through a MIDI stream is
 interpreted as a ‘control,’ which will usually reset the state machine.
-
 
 As a result, CC\#s 8, 17, 22 and 24 have a decreased range of 0-127
 (usually they would go from 0-255.) This means that the smallest
 frequency or length increment you can send is 2.
 
-****
 
 **Using Pushpin’s SMM to Play Digital Audio**
-
-****
-
-****
 
 Is is \*theoretically possible\* to play digital audio through the sound
 hardware with Pushpin in SMM mode. Games for the Game Boy that play
@@ -264,8 +179,6 @@ not going to win any audiophile friends. But it might make some\
 As well, there is a documented problem with the Wave Pattern RAM that
 causes a click on sample 0. See [this
 graph](http://www.devrs.com/gb/files/gbsnd3.gif) for more information.
-
-* * * * *
 
 **Sound Specification for Pushpin**
 
@@ -332,8 +245,6 @@ noise keyed to a polynomial function whose parameters are altered with
 MIDI CCs \#32, \#33, and \#34. It also contains a volume envelope (see
 above.)
 
-* * * * *
-
 **MIDI Specification for Pushpin**
 
 **MIDI Note On Messages**
@@ -394,11 +305,10 @@ the time to read a sound hardware document. There are some
 inconsistencies and bugs in the sound hardware that neither you nor
 Pushpin have any control over.
 
-[GB Hardware Specification Document (scroll down for sound
-information).](http://www.devrs.com/gb/files/gbspec.txt)
+[GB Hardware Specification Document (scroll down for sound information).](http://www.devrs.com/gb/files/gbspec.txt)
 
-**IMPORTANT NOTE**\
- \
+**IMPORTANT NOTE**
+
  The Range value below is just to show what the dynamics of the hardware
 can handle. You should \*always\* send full-bit MIDI CC ranges (0-127) —
 the SMM automatically puts your value in range to the hardware. For
@@ -412,8 +322,7 @@ by any controller value over 63.
 two controller values to change each channel’s pan position), we have
 upgraded the SMM with 4 extra controllers, 86-89. Each controller
 controls a channel’s panorama position, where controller values between
-0\
- and 31 push the channel towards the left, 96-127 push it towards the
+0 and 31 push the channel towards the left, 96-127 push it towards the
 right, and anything else keeps it in the center. Of course, you still
 can use the panning controls of the sound hardware, but it is less
 intuitive.
