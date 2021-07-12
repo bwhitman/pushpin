@@ -105,7 +105,7 @@ changes of parameters along with the notes in your song, or just set up
 unlike the Program/Patch change or MIDI Note messages, Controller
 changes on Pushpin all must be received on the first set MIDI Channel.
 
-For more information on MIDI, see [MIDI Manufacturer’s Assocation](http://www.midi.org/) or [Complete MIDI Specification](http://www.gweep.net/~prefect/eng/reference/protocol/midispec.html).
+For more information on MIDI, see [MIDI Manufacturer’s Association](http://www.midi.org/) or [Complete MIDI Specification](http://www.gweep.net/~prefect/eng/reference/protocol/midispec.html).
 
 **What can I do with the Wave Pattern RAM?**
 
